@@ -19,7 +19,7 @@ This is a design challenge #001 Sign Up to the [Daily UI](https://www.dailyui.co
 
 ### Screenshot
 
-![](./preview.jpg)
+![](./preview.png)
 
 ## My process
 
