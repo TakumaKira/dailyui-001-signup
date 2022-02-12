@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+    <script type="module" src="./signup-form.js"></script>
+
+    <style type="text/css">
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      signup-form {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <signup-form></signup-form>
+    <signup-form
+      title="Test"
+      submit-button-title="Go"
+      email-placeholder="your email address..."
+      password-placeholder="your password..."
+      complete-message="See you!"
+      background-color="gray"
+      button-background-color="black"
+      title-color="red"
+      button-color="blue"
+      error-message-color="yellow"
+      complete-message-color="cyan"
+    ></signup-form>
+    <script type="text/javascript">
+      const form = document.querySelector('signup-form')
+      form.addEventListener('submit', event => console.log(event.detail))
+    </script>
+  </body>
+</html>
