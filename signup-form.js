@@ -6,7 +6,7 @@ const elements = `
     <h1 id="title"></h1>
 
     <div id="email-input-wrapper" class="input-wrapper">
-      <input id="email" name="email" type="text" placeholder=" " />
+      <input id="email" name="email" type="text" placeholder=" " autocapitalize="none" />
       <label id="email-placeholder" for="email"></label>
     </div>
     <span id="email-error" class="error"></span>
