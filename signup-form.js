@@ -92,7 +92,6 @@ const styles = `
       transform-origin: center left;
       transition: all 0.3s;
       color: var(--placeholder-color);
-      opacity: 0.5;
     }
     input:focus + label, input:not(:placeholder-shown) + label {
       transform: translateY(-110%) scale(0.8);
@@ -345,13 +344,13 @@ export class SignupForm extends HTMLElement {
       this.titleColor = '#FFFFFF'
     }
     if (!this.placeholderColor) {
-      this.placeholderColor = '#FFFFFF'
+      this.placeholderColor = 'rgba(255, 255, 255, 0.5)'
     }
     if (!this.inputColor) {
       this.inputColor = '#FFFFFF'
     }
     if (!this.underlineColor) {
-      this.underlineColor = '#FFFFFF'
+      this.underlineColor = 'rgba(255, 255, 255, 0.75)'
     }
     if (!this.errorMessageColor) {
       this.errorMessageColor = '#ff4242'
