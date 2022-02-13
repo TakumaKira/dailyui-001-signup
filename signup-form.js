@@ -95,7 +95,7 @@ const styles = `
       opacity: 0.5;
     }
     input:focus + label, input:not(:placeholder-shown) + label {
-      transform: translateY(-110%) scale(80%);
+      transform: translateY(-110%) scale(0.8);
     }
     .error {
       font-size: 15px;
