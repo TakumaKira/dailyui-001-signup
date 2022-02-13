@@ -252,11 +252,10 @@ export class SignupForm extends HTMLElement {
     this.emailElem.oninput = e => {
       // Add has-value class when having a value
       const hasValue = this.emailElem.value !== ''
-      const original = this.emailInputWrapperElem.getAttribute('class')
       if (hasValue) {
-        this.emailInputWrapperElem.setAttribute('class', this.addClass(original, 'has-value'))
+        this.emailInputWrapperElem.classList.add('has-value')
       } else {
-        this.emailInputWrapperElem.setAttribute('class', this.removeClass(original, 'has-value'))
+        this.emailInputWrapperElem.classList.remove('has-value')
       }
 
       // Hide error message on next input
@@ -265,11 +264,10 @@ export class SignupForm extends HTMLElement {
     this.passwordElem.oninput = e => {
       // Add has-value class when having a value
       const hasValue = this.passwordElem.value !== ''
-      const original = this.passwordInputWrapperElem.getAttribute('class')
       if (hasValue) {
-        this.passwordInputWrapperElem.setAttribute('class', this.addClass(original, 'has-value'))
+        this.passwordInputWrapperElem.classList.add('has-value')
       } else {
-        this.passwordInputWrapperElem.setAttribute('class', this.removeClass(original, 'has-value'))
+        this.passwordInputWrapperElem.classList.remove('has-value')
       }
 
       // Hide error message on next input
@@ -278,20 +276,16 @@ export class SignupForm extends HTMLElement {
 
     // Add focus class when focused
     this.emailElem.onfocus = e => {
-      const original = this.emailInputWrapperElem.getAttribute('class')
-      this.emailInputWrapperElem.setAttribute('class', this.addClass(original, 'focus'))
+      this.emailInputWrapperElem.classList.add('focus')
     }
     this.emailElem.onblur = e => {
-      const original = this.emailInputWrapperElem.getAttribute('class')
-      this.emailInputWrapperElem.setAttribute('class', this.removeClass(original, 'focus'))
+      this.emailInputWrapperElem.classList.remove('focus')
     }
     this.passwordElem.onfocus = e => {
-      const original = this.passwordInputWrapperElem.getAttribute('class')
-      this.passwordInputWrapperElem.setAttribute('class', this.addClass(original, 'focus'))
+      this.passwordInputWrapperElem.classList.add('focus')
     }
     this.passwordElem.onblur = e => {
-      const original = this.passwordInputWrapperElem.getAttribute('class')
-      this.passwordInputWrapperElem.setAttribute('class', this.removeClass(original, 'focus'))
+      this.passwordInputWrapperElem.classList.remove('focus')
     }
   }
 
