@@ -26,21 +26,20 @@
   </head>
   <body>
     <signup-form></signup-form>
-    <!-- For testing attributes
-      <signup-form
-        title="Test"
-        submit-button-title="Go"
-        email-placeholder="your email address..."
-        password-placeholder="your password..."
-        complete-message="See you!"
-        background-color="gray"
-        button-background-color="black"
-        title-color="red"
-        button-color="blue"
-        error-message-color="yellow"
-        complete-message-color="cyan"
-      ></signup-form>
-    -->
+    <!-- For testing attributes -->
+    <signup-form
+      title="Test"
+      submit-button-title="Go"
+      email-placeholder="your email address..."
+      password-placeholder="your password..."
+      complete-message="See you!"
+      background-color="gray"
+      button-background-color="black"
+      title-color="red"
+      button-color="blue"
+      error-message-color="yellow"
+      complete-message-color="cyan"
+    ></signup-form>
     <script type="text/javascript">
       const form = document.querySelector('signup-form')
       form.addEventListener('submit', event => console.log(event.detail))
