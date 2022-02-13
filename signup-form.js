@@ -3,21 +3,21 @@ import 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'
 const template = document.createElement('template')
 const elements = `
   <form id="form">
-  <h1 id="title"></h1>
+    <h1 id="title"></h1>
 
-  <div id="email-input-wrapper" class="input-wrapper">
-    <input id="email" name="email" type="text" placeholder=" " />
-    <label id="email-placeholder" for="email"></label>
-  </div>
-  <span id="email-error" class="error"></span>
+    <div id="email-input-wrapper" class="input-wrapper">
+      <input id="email" name="email" type="text" placeholder=" " />
+      <label id="email-placeholder" for="email"></label>
+    </div>
+    <span id="email-error" class="error"></span>
 
-  <div id="password-input-wrapper" class="input-wrapper">
-    <input id="password" name="password" type="password" placeholder=" " />
-    <label id="password-placeholder" for="password"></label>
-  </div>
-  <span id="password-error" class="error"></span>
+    <div id="password-input-wrapper" class="input-wrapper">
+      <input id="password" name="password" type="password" placeholder=" " />
+      <label id="password-placeholder" for="password"></label>
+    </div>
+    <span id="password-error" class="error"></span>
 
-  <button id="button" type="submit"></button>
+    <button id="button" type="submit"></button>
   </form>
 
   <h1 id="complete" hidden></h1>
@@ -26,23 +26,27 @@ const styles = `
   <style>
     :host {
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 300;
+      font-family: var(--font-family);
+      font-weight: var(--font-weight);
       padding: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
+      background-color: var(--background-color);
     }
-    form {
-      width: 400px;
+    #form {
+      width: var(--width);
       display: flex;
       flex-direction: column;
       align-items: center;
     }
     h1 {
-      font-weight: normal;
+      font-weight: var(--font-weight);
       margin-block-start: 0.3em;
       margin-block-end: 0.3em;
+    }
+    #title {
+      color: var(--title-color);
     }
     .input-wrapper {
       position: relative;
@@ -56,7 +60,7 @@ const styles = `
       position: absolute;
       bottom: 0;
       width: 100%;
-      background-color: #FFFFFF;
+      background-color: var(--underline-color);
       height: 1px;
       transition: height 0.3s;
     }
@@ -69,18 +73,16 @@ const styles = `
       border: none;
       outline: none;
       background-color: transparent;
-    }
-    input[type="text"], input[type="password"] {
-      font-family: 'Poppins', sans-serif;
-      font-size: 16px;
+      font-family: var(--font-family);
+      font-size: 18px;
       padding: 5px 10px;
-      color: #FFFFFF;
+      color: var(--input-color);
     }
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active{
-      -webkit-text-fill-color: #FFFFFF;
+      -webkit-text-fill-color: var(--input-color);
       -webkit-box-shadow: 0 0 0px 1000px rgba(0,0,0,0) inset;
       transition: background-color 5000s ease-in-out 0s;
     }
@@ -89,11 +91,11 @@ const styles = `
       margin-left: 10px;
       transform-origin: center left;
       transition: all 0.3s;
-      color: #FFFFFF;
+      color: var(--placeholder-color);
       opacity: 0.5;
     }
     input:focus + label, input:not(:placeholder-shown) + label {
-      transform: translateY(-100%) scale(80%);
+      transform: translateY(-110%) scale(80%);
     }
     .error {
       font-size: 15px;
@@ -101,15 +103,22 @@ const styles = `
       margin-top: 5px;
       margin-bottom: 15px;
       margin-left: 5px;
+      color: var(--error-message-color)
     }
     button {
       border-radius: 2px;
       border: none;
       font-size: 20px;
-      font-family: 'Poppins', sans-serif;
+      font-family: var(--font-family);
       cursor: pointer;
       margin-top: 10px;
       padding: 5px 20px;
+      color: var(--button-color);
+      background-color: var(--button-background-color);
+    }
+
+    #complete {
+      color: var(--complete-message-color)
     }
   </style>
 `
@@ -121,29 +130,43 @@ template.innerHTML = `
 export class SignupForm extends HTMLElement {
   static get observedAttributes() {
     return [
+      // Layout
+      'width',
+
+      // Fonts
+      'font-google',
+      'font-fallback',
+      'font-weight',
+
+      // Texts
       'title',
-      'submit-button-title',
+      'submit-button-label',
       'email-placeholder',
       'password-placeholder',
       'complete-message',
+
+      // Colors
       'background-color',
-      'button-background-color',
       'title-color',
-      'button-color',
+      'placeholder-color',
+      'input-color',
+      'underline-color',
       'error-message-color',
+      'button-background-color',
+      'button-color',
       'complete-message-color',
     ]
   }
 
   constructor() {
     super()
-    this.loadFont()
     this.getElements()
     this.setEventListeners()
   }
 
   connectedCallback() {
     this.initializeParams()
+    this.loadFont()
     this.render()
   }
 
@@ -159,7 +182,7 @@ export class SignupForm extends HTMLElement {
     WebFont.load({
       google: {
         families: [
-          'Poppins:300',
+          `${this.fontGoogle}:${this.fontWeight}`,
         ]
       }
     })
@@ -287,91 +310,160 @@ export class SignupForm extends HTMLElement {
   }
 
   initializeParams() {
-    if (!this.title) {
-      this.title = 'Sign Up';
+    // Layout
+    if (!this.width) {
+      this.width = '400px'
     }
-    if (!this.submitButtonTitle) {
-      this.submitButtonTitle = 'Sign Up';
+
+    // Fonts
+    if (!this.fontGoogle) {
+      this.fontGoogle = 'Poppins'
+    }
+    if (!this.fontFallback) {
+      this.fontFallback = 'sans-serif'
+    }
+    if (!this.fontWeight) {
+      this.fontWeight = 300
+    }
+
+    // Texts
+    if (!this.title) {
+      this.title = 'Sign Up'
     }
     if (!this.emailPlaceholder) {
-      this.emailPlaceholder = 'Email';
+      this.emailPlaceholder = 'Email'
     }
     if (!this.passwordPlaceholder) {
-      this.passwordPlaceholder = 'Password';
+      this.passwordPlaceholder = 'Password'
+    }
+    if (!this.submitButtonLabel) {
+      this.submitButtonLabel = 'Sign Up'
     }
     if (!this.completeMessage) {
-      this.completeMessage = 'Thank you!';
+      this.completeMessage = 'Thank you!'
     }
+
+    // Colors
     if (!this.backgroundColor) {
-      this.backgroundColor = '#8f2a2a';
-    }
-    if (!this.buttonBackgroundColor) {
-      this.buttonBackgroundColor = '#7c7c7c';
+      this.backgroundColor = '#8f2a2a'
     }
     if (!this.titleColor) {
-      this.titleColor = '#FFFFFF';
+      this.titleColor = '#FFFFFF'
     }
-    if (!this.buttonColor) {
-      this.buttonColor = '#FFFFFF';
+    if (!this.placeholderColor) {
+      this.placeholderColor = '#FFFFFF'
+    }
+    if (!this.inputColor) {
+      this.inputColor = '#FFFFFF'
+    }
+    if (!this.underlineColor) {
+      this.underlineColor = '#FFFFFF'
     }
     if (!this.errorMessageColor) {
-      this.errorMessageColor = '#ff4242';
+      this.errorMessageColor = '#ff4242'
+    }
+    if (!this.buttonBackgroundColor) {
+      this.buttonBackgroundColor = '#7c7c7c'
+    }
+    if (!this.buttonColor) {
+      this.buttonColor = '#FFFFFF'
     }
     if (!this.completeMessageColor) {
-      this.completeMessageColor = '#FFFFFF';
+      this.completeMessageColor = '#FFFFFF'
     }
   }
 
   updateParams(name, newVal) {
     switch(name) {
+      // Layout
+      case 'width':
+        this.width = newVal
+        break
+
+      // Fonts
+      case 'font-google':
+        this.fontGoogle = newVal
+        break
+      case 'font-fallback':
+        this.fontFallback = newVal
+        break
+      case 'font-weight':
+        this.fontWeight = newVal
+        break
+
+      // Texts
       case 'title':
-        this.title = newVal;
-        break;
-      case 'submit-button-title':
-        this.submitButtonTitle = newVal;
-        break;
+        this.title = newVal
+        break
       case 'email-placeholder':
-        this.emailPlaceholder = newVal;
-        break;
+        this.emailPlaceholder = newVal
+        break
       case 'password-placeholder':
-        this.passwordPlaceholder = newVal;
-        break;
+        this.passwordPlaceholder = newVal
+        break
+      case 'submit-button-label':
+        this.submitButtonLabel = newVal
+        break
       case 'complete-message':
-        this.completeMessage = newVal;
-        break;
+        this.completeMessage = newVal
+        break
+
+      // Colors
       case 'background-color':
-        this.backgroundColor = newVal;
-        break;
-      case 'button-background-color':
-        this.buttonBackgroundColor = newVal;
-        break;
+        this.backgroundColor = newVal
+        break
       case 'title-color':
-        this.titleColor = newVal;
-        break;
-      case 'button-color':
-        this.buttonColor = newVal;
-        break;
+        this.titleColor = newVal
+        break
+      case 'placeholder-color':
+        this.placeholderColor = newVal
+        break
+      case 'input-color':
+        this.inputColor = newVal
+        break
+      case 'underline-color':
+        this.underlineColor = newVal
+        break
       case 'error-message-color':
-        this.errorMessageColor = newVal;
-        break;
+        this.errorMessageColor = newVal
+        break
+      case 'button-background-color':
+        this.buttonBackgroundColor = newVal
+        break
+      case 'button-color':
+        this.buttonColor = newVal
+        break
       case 'complete-message-color':
-        this.completeMessageColor = newVal;
-        break;
+        this.completeMessageColor = newVal
+        break
     }
   }
 
   render() {
+    // Layout
+    this.rootElem.style.setProperty('--width', this.width)
+
+    // Fonts
+    this.rootElem.style.setProperty('--font-family', `'${this.fontGoogle}', ${this.fontFallback}`)
+    this.rootElem.style.setProperty('--font-weight', this.fontWeight)
+
+    // Texts
     this.titleElem.textContent = this.title
-    this.buttonElem.textContent = this.submitButtonTitle
     this.emailPlaceholderElem.textContent = this.emailPlaceholder
     this.passwordPlaceholderElem.textContent = this.passwordPlaceholder
+    this.buttonElem.textContent = this.submitButtonLabel
     this.completeElem.textContent = this.completeMessage
-    this.rootElem.setAttribute('style', `background-color: ${this.backgroundColor}`)
-    this.titleElem.setAttribute('style', `color: ${this.titleColor}`)
-    this.buttonElem.setAttribute('style', `color: ${this.buttonColor}; background-color: ${this.buttonBackgroundColor}`)
-    this.emailErrorElem.setAttribute('style', `color: ${this.errorMessageColor}`)
-    this.passwordErrorElem.setAttribute('style', `color: ${this.errorMessageColor}`)
-    this.completeElem.setAttribute('style', `color: ${this.completeMessageColor}`)
+
+    // Colors
+    this.rootElem.style.setProperty('--background-color', this.backgroundColor)
+    this.rootElem.style.setProperty('--title-color', this.titleColor)
+    this.rootElem.style.setProperty('--placeholder-color', this.placeholderColor)
+    this.rootElem.style.setProperty('--input-color', this.inputColor)
+    this.rootElem.style.setProperty('--underline-color', this.underlineColor)
+    this.rootElem.style.setProperty('--error-message-color', this.errorMessageColor)
+    this.rootElem.style.setProperty('--button-background-color', this.buttonBackgroundColor)
+    this.rootElem.style.setProperty('--button-color', this.buttonColor)
+    this.rootElem.style.setProperty('--complete-message-color', this.completeMessageColor)
   }
 }
 

@@ -27,19 +27,26 @@
   <body>
     <signup-form></signup-form>
     <!-- For testing attributes -->
-    <signup-form
+    <!-- <signup-form
+      width="450px"
+      font-google="Roboto Mono"
+      font-fallback="serif"
+      font-weight="700"
       title="Test"
-      submit-button-title="Go"
+      submit-button-label="Go"
       email-placeholder="your email address..."
       password-placeholder="your password..."
       complete-message="See you!"
       background-color="gray"
       button-background-color="black"
       title-color="red"
+      placeholder-color="yellow"
+      input-color="green"
+      underline-color="blue"
       button-color="blue"
       error-message-color="yellow"
       complete-message-color="cyan"
-    ></signup-form>
+    ></signup-form> -->
     <script type="text/javascript">
       const form = document.querySelector('signup-form')
       form.addEventListener('submit', event => console.log(event.detail))
