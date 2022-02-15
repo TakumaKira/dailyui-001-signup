@@ -288,20 +288,6 @@ export class SignupForm extends HTMLElement {
     }
   }
 
-  addClass(original, newClass) {
-    const classes = original.split(' ')
-    if (classes.includes(newClass))
-      return original
-    classes.push(newClass)
-    return classes.join(' ')
-  }
-
-  removeClass(original, oldClass) {
-    const classes = original.split(' ')
-    const filtered = classes.filter(c => c !== oldClass)
-    return filtered.join(' ')
-  }
-
   initializeParams() {
     // Layout
     if (!this.width) {
