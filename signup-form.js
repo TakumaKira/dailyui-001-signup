@@ -1,20 +1,21 @@
 import 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'
+import './labeled-input.js'
 
 const template = document.createElement('template')
 const elements = `
   <form id="form">
     <h1 id="title"></h1>
 
-    <div id="email-input-wrapper" class="input-wrapper">
-      <input id="email" name="email" type="text" placeholder=" " autocapitalize="none" />
-      <label id="email-placeholder" for="email"></label>
-    </div>
+    <labeled-input
+      id="email-input"
+      type="text"
+    ></labeled-input>
     <span id="email-error" class="error"></span>
 
-    <div id="password-input-wrapper" class="input-wrapper">
-      <input id="password" name="password" type="password" placeholder=" " />
-      <label id="password-placeholder" for="password"></label>
-    </div>
+    <labeled-input
+      id="password-input"
+      type="password"
+    ></labeled-input>
     <span id="password-error" class="error"></span>
 
     <button id="button" type="submit"></button>
@@ -48,53 +49,8 @@ const styles = `
     #title {
       color: var(--title-color);
     }
-    .input-wrapper {
-      position: relative;
+    labeled-input {
       width: 100%;
-      margin-top: 15px;
-      display: flex;
-      align-items: center;
-    }
-    .input-wrapper::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      background-color: var(--underline-color);
-      height: 1px;
-      transition: height 0.3s;
-    }
-    .input-wrapper.focus::after, .input-wrapper.has-value::after {
-      height: 2px;
-    }
-    input {
-      display: block;
-      width: 95%;
-      border: none;
-      outline: none;
-      background-color: transparent;
-      font-family: var(--font-family);
-      font-size: 18px;
-      padding: 5px 10px;
-      color: var(--input-color);
-    }
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus,
-    input:-webkit-autofill:active{
-      -webkit-text-fill-color: var(--input-color);
-      -webkit-box-shadow: 0 0 0px 1000px rgba(0,0,0,0) inset;
-      transition: background-color 5000s ease-in-out 0s;
-    }
-    label {
-      position: absolute;
-      margin-left: 10px;
-      transform-origin: center left;
-      transition: all 0.3s;
-      color: var(--placeholder-color);
-    }
-    input:focus + label, input:not(:placeholder-shown) + label {
-      transform: translateY(-110%) scale(0.8);
     }
     .error {
       font-size: 15px;
@@ -104,7 +60,7 @@ const styles = `
       margin-left: 5px;
       color: var(--error-message-color)
     }
-    button {
+    #button {
       border-radius: 2px;
       border: none;
       font-size: 20px;
@@ -127,48 +83,17 @@ template.innerHTML = `
 `
 
 export class SignupForm extends HTMLElement {
-  static get observedAttributes() {
-    return [
-      // Layout
-      'width',
-
-      // Fonts
-      'font-google',
-      'font-fallback',
-      'font-weight',
-
-      // Texts
-      'title',
-      'submit-button-label',
-      'email-placeholder',
-      'password-placeholder',
-      'complete-message',
-
-      // Colors
-      'background-color',
-      'title-color',
-      'placeholder-color',
-      'input-color',
-      'underline-color',
-      'error-message-color',
-      'button-background-color',
-      'button-color',
-      'complete-message-color',
-    ]
-  }
-
   constructor() {
     super()
+    this.attach()
     this.getElements()
-    this.setEventListeners()
-  }
-
-  connectedCallback() {
     this.initializeParams()
+  }
+  connectedCallback() {
     this.loadFont()
+    this.setEventListeners()
     this.render()
   }
-
   attributeChangedCallback(name, oldVal, newVal) {
     if (oldVal === newVal) {
       return
@@ -177,7 +102,25 @@ export class SignupForm extends HTMLElement {
     this.render()
   }
 
+  attach() {
+    this.root = this.attachShadow({mode: 'closed'})
+    this.root.appendChild(template.content.cloneNode(true))
+  }
+  getElements() {
+    this.rootElem = this.root.host
+    this.titleElem = this.root.querySelector('#title')
+    this.formElem = this.root.querySelector('#form')
+    this.emailInputElem = this.root.querySelector('#email-input')
+    this.emailErrorElem = this.root.querySelector('#email-error')
+    this.passwordInputElem = this.root.querySelector('#password-input')
+    this.passwordErrorElem = this.root.querySelector('#password-error')
+    this.buttonElem = this.root.querySelector('#button')
+    this.completeElem = this.root.querySelector('#complete')
+  }
   loadFont() {
+    if (!this.fontGoogle) {
+      return
+    }
     WebFont.load({
       google: {
         families: [
@@ -186,25 +129,6 @@ export class SignupForm extends HTMLElement {
       }
     })
   }
-
-  getElements() {
-    this.root = this.attachShadow({mode: 'closed'})
-    this.root.appendChild(template.content.cloneNode(true))
-    this.rootElem = this.root.host
-    this.titleElem = this.root.querySelector('#title')
-    this.formElem = this.root.querySelector('#form')
-    this.emailInputWrapperElem = this.root.querySelector('#email-input-wrapper')
-    this.emailElem = this.root.querySelector('#email')
-    this.emailPlaceholderElem = this.root.querySelector('#email-placeholder')
-    this.emailErrorElem = this.root.querySelector('#email-error')
-    this.passwordInputWrapperElem = this.root.querySelector('#password-input-wrapper')
-    this.passwordElem = this.root.querySelector('#password')
-    this.passwordPlaceholderElem = this.root.querySelector('#password-placeholder')
-    this.passwordErrorElem = this.root.querySelector('#password-error')
-    this.buttonElem = this.root.querySelector('#button')
-    this.completeElem = this.root.querySelector('#complete')
-  }
-
   setEventListeners() {
     // Submit events
     this.formElem.onsubmit = e => {
@@ -213,12 +137,13 @@ export class SignupForm extends HTMLElement {
 
       // Validation
       const detail = {
-        email: e.target.elements.email.value,
-        password: e.target.elements.password.value
+        email: this.emailInputElem.value,
+        password: this.passwordInputElem.value
       }
+
       const constraints = {
         email: {
-          email: true
+          email: true,
         },
         password: {
           length: {
@@ -247,47 +172,47 @@ export class SignupForm extends HTMLElement {
       this.completeElem.removeAttribute('hidden')
     }
 
-    // input change events
-    this.emailElem.oninput = e => {
-      // Add has-value class when having a value
-      const hasValue = this.emailElem.value !== ''
-      if (hasValue) {
-        this.emailInputWrapperElem.classList.add('has-value')
-      } else {
-        this.emailInputWrapperElem.classList.remove('has-value')
-      }
-
-      // Hide error message on next input
+    // Hide error message on next input
+    this.emailInputElem.oninput = e => {
       this.emailErrorElem.textContent = ''
     }
-    this.passwordElem.oninput = e => {
-      // Add has-value class when having a value
-      const hasValue = this.passwordElem.value !== ''
-      if (hasValue) {
-        this.passwordInputWrapperElem.classList.add('has-value')
-      } else {
-        this.passwordInputWrapperElem.classList.remove('has-value')
-      }
-
-      // Hide error message on next input
+    this.passwordInputElem.oninput = e => {
       this.passwordErrorElem.textContent = ''
-    }
-
-    // Add focus class when focused
-    this.emailElem.onfocus = e => {
-      this.emailInputWrapperElem.classList.add('focus')
-    }
-    this.emailElem.onblur = e => {
-      this.emailInputWrapperElem.classList.remove('focus')
-    }
-    this.passwordElem.onfocus = e => {
-      this.passwordInputWrapperElem.classList.add('focus')
-    }
-    this.passwordElem.onblur = e => {
-      this.passwordInputWrapperElem.classList.remove('focus')
     }
   }
 
+  static get observedAttributes() {
+    return [
+      // Layout
+      'width',
+
+      // Fonts
+      'font-google',
+      'font-fallback',
+      'font-weight',
+      'input-font-size',
+      'label-font-size',
+
+      // Texts
+      'title',
+      'email-label',
+      'password-label',
+      'submit-button-label',
+      'complete-message',
+
+      // Colors
+      'background-color',
+      'input-background-color',
+      'title-color',
+      'label-color',
+      'input-color',
+      'underline-color',
+      'error-message-color',
+      'button-background-color',
+      'button-color',
+      'complete-message-color',
+    ]
+  }
   initializeParams() {
     // Layout
     if (!this.width) {
@@ -304,16 +229,22 @@ export class SignupForm extends HTMLElement {
     if (!this.fontWeight) {
       this.fontWeight = 300
     }
+    if (!this.inputFontSize) {
+      this.inputFontSize = '1.2rem'
+    }
+    if (!this.labelFontSize) {
+      this.labelFontSize = '1rem'
+    }
 
     // Texts
     if (!this.title) {
       this.title = 'Sign Up'
     }
-    if (!this.emailPlaceholder) {
-      this.emailPlaceholder = 'Email'
+    if (!this.emailLabel) {
+      this.emailLabel = 'Email'
     }
-    if (!this.passwordPlaceholder) {
-      this.passwordPlaceholder = 'Password'
+    if (!this.passwordLabel) {
+      this.passwordLabel = 'Password'
     }
     if (!this.submitButtonLabel) {
       this.submitButtonLabel = 'Sign Up'
@@ -326,11 +257,14 @@ export class SignupForm extends HTMLElement {
     if (!this.backgroundColor) {
       this.backgroundColor = '#8f2a2a'
     }
+    if (!this.inputBackgroundColor) {
+      this.inputBackgroundColor = 'transparent'
+    }
     if (!this.titleColor) {
       this.titleColor = '#FFFFFF'
     }
-    if (!this.placeholderColor) {
-      this.placeholderColor = 'rgba(255, 255, 255, 0.5)'
+    if (!this.labelColor) {
+      this.labelColor = 'rgba(255, 255, 255, 0.5)'
     }
     if (!this.inputColor) {
       this.inputColor = '#FFFFFF'
@@ -351,7 +285,6 @@ export class SignupForm extends HTMLElement {
       this.completeMessageColor = '#FFFFFF'
     }
   }
-
   updateParams(name, newVal) {
     switch(name) {
       // Layout
@@ -369,16 +302,22 @@ export class SignupForm extends HTMLElement {
       case 'font-weight':
         this.fontWeight = newVal
         break
+      case 'input-font-size':
+        this.inputFontSize = newVal
+        break
+      case 'label-font-size':
+        this.labelFontSize = newVal
+        break
 
       // Texts
       case 'title':
         this.title = newVal
         break
-      case 'email-placeholder':
-        this.emailPlaceholder = newVal
+      case 'email-label':
+        this.emailLabel = newVal
         break
-      case 'password-placeholder':
-        this.passwordPlaceholder = newVal
+      case 'password-label':
+        this.passwordLabel = newVal
         break
       case 'submit-button-label':
         this.submitButtonLabel = newVal
@@ -391,11 +330,14 @@ export class SignupForm extends HTMLElement {
       case 'background-color':
         this.backgroundColor = newVal
         break
+      case 'input-background-color':
+        this.inputBackgroundColor = newVal
+        break
       case 'title-color':
         this.titleColor = newVal
         break
-      case 'placeholder-color':
-        this.placeholderColor = newVal
+      case 'label-color':
+        this.labelColor = newVal
         break
       case 'input-color':
         this.inputColor = newVal
@@ -417,28 +359,46 @@ export class SignupForm extends HTMLElement {
         break
     }
   }
-
   render() {
     // Layout
     this.rootElem.style.setProperty('--width', this.width)
 
     // Fonts
-    this.rootElem.style.setProperty('--font-family', `'${this.fontGoogle}', ${this.fontFallback}`)
+    if (this.fontGoogle) {
+      this.rootElem.style.setProperty('--font-family', `'${this.fontGoogle}', ${this.fontFallback}`)
+    } else {
+      this.rootElem.style.setProperty('--font-family', this.fontFallback)
+    }
     this.rootElem.style.setProperty('--font-weight', this.fontWeight)
+    this.emailInputElem.setAttribute('font-google', this.fontGoogle)
+    this.emailInputElem.setAttribute('font-fallback', this.fontFallback)
+    this.emailInputElem.setAttribute('font-weight', this.fontWeight)
+    this.emailInputElem.setAttribute('font-size', this.inputFontSize)
+    this.emailInputElem.setAttribute('label-font-size', this.labelFontSize)
+    this.emailInputElem.setAttribute('background-color', this.inputBackgroundColor)
+    this.passwordInputElem.setAttribute('font-google', this.fontGoogle)
+    this.passwordInputElem.setAttribute('font-fallback', this.fontFallback)
+    this.passwordInputElem.setAttribute('font-weight', this.fontWeight)
+    this.passwordInputElem.setAttribute('font-size', this.inputFontSize)
+    this.passwordInputElem.setAttribute('label-font-size', this.labelFontSize)
+    this.passwordInputElem.setAttribute('background-color', this.inputBackgroundColor)
 
     // Texts
     this.titleElem.textContent = this.title
-    this.emailPlaceholderElem.textContent = this.emailPlaceholder
-    this.passwordPlaceholderElem.textContent = this.passwordPlaceholder
+    this.emailInputElem.setAttribute('label', this.emailLabel)
+    this.passwordInputElem.setAttribute('label', this.passwordLabel)
     this.buttonElem.textContent = this.submitButtonLabel
     this.completeElem.textContent = this.completeMessage
 
     // Colors
     this.rootElem.style.setProperty('--background-color', this.backgroundColor)
     this.rootElem.style.setProperty('--title-color', this.titleColor)
-    this.rootElem.style.setProperty('--placeholder-color', this.placeholderColor)
-    this.rootElem.style.setProperty('--input-color', this.inputColor)
-    this.rootElem.style.setProperty('--underline-color', this.underlineColor)
+    this.emailInputElem.setAttribute('label-color', this.labelColor)
+    this.emailInputElem.setAttribute('input-color', this.inputColor)
+    this.emailInputElem.setAttribute('underline-color', this.underlineColor)
+    this.passwordInputElem.setAttribute('label-color', this.labelColor)
+    this.passwordInputElem.setAttribute('input-color', this.inputColor)
+    this.passwordInputElem.setAttribute('underline-color', this.underlineColor)
     this.rootElem.style.setProperty('--error-message-color', this.errorMessageColor)
     this.rootElem.style.setProperty('--button-background-color', this.buttonBackgroundColor)
     this.rootElem.style.setProperty('--button-color', this.buttonColor)
