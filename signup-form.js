@@ -1,5 +1,5 @@
 import 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'
-import './labeled-input.js'
+import 'https://unpkg.com/labeled-input'
 
 const template = document.createElement('template')
 const elements = `
