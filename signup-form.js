@@ -230,10 +230,10 @@ export class SignupForm extends HTMLElement {
       this.fontWeight = 300
     }
     if (!this.inputFontSize) {
-      this.inputFontSize = '1.2rem'
+      this.inputFontSize = '1.5rem'
     }
     if (!this.labelFontSize) {
-      this.labelFontSize = '1rem'
+      this.labelFontSize = '1.2rem'
     }
 
     // Texts
@@ -370,8 +370,7 @@ export class SignupForm extends HTMLElement {
       this.rootElem.style.setProperty('--font-family', this.fontFallback)
     }
     this.rootElem.style.setProperty('--font-weight', this.fontWeight)
-    this.emailInputElem.setAttribute('font-google', this.fontGoogle)
-    this.emailInputElem.setAttribute('font-fallback', this.fontFallback)
+    this.emailInputElem.setAttribute('font-family', `'${this.fontGoogle}', ${this.fontFallback}`)
     this.emailInputElem.setAttribute('font-weight', this.fontWeight)
     this.emailInputElem.setAttribute('font-size', this.inputFontSize)
     this.emailInputElem.setAttribute('label-font-size', this.labelFontSize)
