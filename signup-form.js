@@ -230,10 +230,10 @@ export class SignupForm extends HTMLElement {
       this.fontWeight = 300
     }
     if (!this.inputFontSize) {
-      this.inputFontSize = '1.2rem'
+      this.inputFontSize = '1.5rem'
     }
     if (!this.labelFontSize) {
-      this.labelFontSize = '1rem'
+      this.labelFontSize = '1.2rem'
     }
 
     // Texts
